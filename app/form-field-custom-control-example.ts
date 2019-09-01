@@ -18,13 +18,14 @@ export class FormFieldCustomControlExample {
   ) {
     this.form = this.fb.group({
       phone: [
-        '999 999 999',
+        {area: '222', exchange: '111', subscriber: '000'},
         [
           Validators.required,
           Validators.minLength(9)
         ]
       ]
-    })
+    });
+    (window as any).form = this.form;
   }
 }
 
@@ -100,6 +101,8 @@ export class MyTelInput implements ControlValueAccessor, MatFormFieldControl<MyT
     return null;
   }
   set value(tel: MyTel | null) {
+    console.log(tel);
+    debugger;
     const { area, exchange, subscriber } = tel || new MyTel('', '', '');
     this.parts.setValue({ area, exchange, subscriber });
     this.stateChanges.next();
@@ -112,9 +115,9 @@ export class MyTelInput implements ControlValueAccessor, MatFormFieldControl<MyT
     @Optional() @Self() public ngControl: NgControl) {
 
     this.parts = formBuilder.group({
-      area: '',
-      exchange: '',
-      subscriber: '',
+      area: ['', Validators.required],
+      exchange: ['', Validators.required],
+      subscriber: ['', Validators.required],
     });
 
     _focusMonitor.monitor(_elementRef, true).subscribe(origin => {
@@ -126,6 +129,7 @@ export class MyTelInput implements ControlValueAccessor, MatFormFieldControl<MyT
     });
 
     if (this.ngControl != null) {
+      (window as any).ngControl = this.ngControl;
       this.ngControl.valueAccessor = this;
     }
   }
